@@ -205,6 +205,26 @@ const _nav = [
     to: '/dashboard/statistics',
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
   },
+
+
+  {
+  component: CNavGroup,
+  name: 'alarm',
+  icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+  items: [
+  {
+    component: CNavItem,
+    name: 'alarm',
+    to: '/alarm/alarm',
+  },
+  {
+    component: CNavItem,
+    name: 'Subscribe',
+    to: '/alarm/subscribe',
+  },
+  ],
+},
+
   {
     component: CNavGroup,
     name: 'Icons',

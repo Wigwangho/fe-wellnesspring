@@ -36,6 +36,12 @@ const Range = React.lazy(() => import('./views/forms/range/Range'))
 const Select = React.lazy(() => import('./views/forms/select/Select'))
 const Validation = React.lazy(() => import('./views/forms/validation/Validation'))
 
+//alert
+const alarm = React.lazy(()=> import('./views/alarm/alarm/alarm'))
+const Subscribe = React.lazy(()=> import('./views/alarm/subscribe/subscribe'))
+
+
+//statistics
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 const statistics = React.lazy(()=> import('./views/statistics/statistics'))
 const food = React.lazy(()=> import('./views/statistics/food/food'))
@@ -53,7 +59,6 @@ const Alerts = React.lazy(() => import('./views/notifications/alerts/Alerts'))
 const Badges = React.lazy(() => import('./views/notifications/badges/Badges'))
 const Modals = React.lazy(() => import('./views/notifications/modals/Modals'))
 const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
-
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 const routes = [
@@ -107,6 +112,10 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
+
+  { path: '/alarm/alarm', name: 'alarm', element: alarm },
+  { path: '/alarm/subscribe', name: 'subscribe', element: Subscribe },
+
 ]
 
 export default routes
