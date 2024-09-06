@@ -25,8 +25,11 @@ import CIcon from '@coreui/icons-react'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
+  
+  const nav = useNavigate();
   const user = useSelector(state => state.user)
 
   return user ? (
@@ -95,7 +98,7 @@ const AppHeaderDropdown = () => {
       </CDropdownMenu>
     </CDropdown>
   ) : ( // 로그인 안된 경우
-    <CButton>login</CButton>
+    <CButton color='secondary' onClick={() => nav("/login")}>Login</CButton>
   )
 }
 
