@@ -26,6 +26,13 @@ const _nav = [
       text: 'NEW',
     },
   },
+  
+  {
+    component: CNavTitle,
+    name: 'Project',
+  },
+
+
   {
     component: CNavTitle,
     name: 'Theme',
