@@ -40,7 +40,11 @@ const Validation = React.lazy(() => import('./views/forms/validation/Validation'
 const alarm = React.lazy(()=> import('./views/alarm/alarm/alarm'))
 const Subscribe = React.lazy(()=> import('./views/alarm/subscribe/subscribe'))
 
-
+//sport
+const addFood = React.lazy(()=> import('./views/food/addFood/addFood'))
+const addMeals = React.lazy(()=> import('./views/food/addMeals/addMeals'))
+const mealModify = React.lazy(()=> import('./views/food/mealModify/mealModify'))
+const selectNutrient = React.lazy(()=> import('./views/food/selectNutrient/selectNutrient'))
 //statistics
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 const statistics = React.lazy(()=> import('./views/statistics/statistics'))
@@ -114,7 +118,12 @@ const routes = [
   { path: '/widgets', name: 'Widgets', element: Widgets },
 
   { path: '/alarm/alarm', name: 'alarm', element: alarm },
-  { path: '/alarm/subscribe', name: 'subscribe', element: Subscribe },
+  { path: '/dashboard/food/addFood', name: 'addFood', element: addFood },
+  { path: '/dashboard/food/addMeals', name: 'addMeals', element: addMeals },
+  { path: '/dashboard/food/mealModify', name: 'mealModify', element: mealModify },
+  { path: '/dashboard/food/selectNutrient', name: 'selectNutrient', element: selectNutrient },
+
+
 
 ]
 
