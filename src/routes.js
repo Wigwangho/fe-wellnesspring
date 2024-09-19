@@ -39,6 +39,11 @@ const Validation = React.lazy(() => import('./views/forms/validation/Validation'
 //alert
 const alarm = React.lazy(()=> import('./views/alarm/alarm/alarm'))
 const Subscribe = React.lazy(()=> import('./views/alarm/subscribe/subscribe'))
+//Sport
+const SportPlanForm = React.lazy(()=> import('./views/Sport/addPlan/SportPlanForm'))
+const SportPlanView = React.lazy(()=> import('./views/Sport/showPlan/SportPlanView'))
+const ModifySportPlan = React.lazy(()=> import('./views/Sport/modifyPlan/ModifySportPlan'))
+
 
 //sport
 const addFood = React.lazy(()=> import('./views/food/addFood/addFood'))
@@ -118,6 +123,11 @@ const routes = [
   { path: '/widgets', name: 'Widgets', element: Widgets },
 
   { path: '/alarm/alarm', name: 'alarm', element: alarm },
+  { path: '/Sport/addPlan', name: 'SportPlanForm', element: SportPlanForm },
+  { path: '/Sport/showPlan', name: 'SportPlanView', element: SportPlanView },
+  { path: '/Sport/modify/plan/:id', name: 'ModifySportPlan', element: ModifySportPlan },
+
+
   { path: '/dashboard/food/addFood', name: 'addFood', element: addFood },
   { path: '/dashboard/food/addMeals', name: 'addMeals', element: addMeals },
   { path: '/dashboard/food/mealModify', name: 'mealModify', element: mealModify },

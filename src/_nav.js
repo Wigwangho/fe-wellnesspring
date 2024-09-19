@@ -11,7 +11,7 @@ import {
   cilPencil,
   cilPuzzle,
   cilSpeedometer,
-  cilStar,
+  cilStar, cilWeightlifitng,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -26,10 +26,49 @@ const _nav = [
       text: 'NEW',
     },
   },
-  
+
   {
     component: CNavTitle,
     name: 'Project',
+  },
+  {
+    component: CNavGroup,
+    name: 'alarm',
+    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'alarm',
+        to: '/alarm/alarm',
+      },
+      {
+        component: CNavItem,
+        name: 'Subscribe',
+        to: '/alarm/subscribe',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Sport',
+    icon: <CIcon icon={cilWeightlifitng} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: '계획하기',
+        to: '/Sport/addPlan',
+      },
+      {
+        component: CNavItem,
+        name: '기록하기',
+        to: '/alarm/subscribe',
+      },
+      {
+        component: CNavItem,
+        name: '운동계획 보기',
+        to: '/Sport/showPlan',
+      },
+    ],
   },
 
 
@@ -213,24 +252,6 @@ const _nav = [
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
   },
 
-
-  {
-  component: CNavGroup,
-  name: 'alarm',
-  icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
-  items: [
-  {
-    component: CNavItem,
-    name: 'alarm',
-    to: '/alarm/alarm',
-  },
-  {
-    component: CNavItem,
-    name: 'Subscribe',
-    to: '/alarm/subscribe',
-  },
-  ],
-},
 
   {
     component: CNavGroup,
