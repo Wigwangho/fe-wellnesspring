@@ -60,8 +60,8 @@ const _nav = [
       },
       {
         component: CNavItem,
-        name: '기록하기',
-        to: '/alarm/subscribe',
+        name: '운동기록 보기',
+        to: '/Sport/showRecord',
       },
       {
         component: CNavItem,

@@ -4,10 +4,12 @@ import Select from "react-select";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const SportPlanForm = () => {
+  const user = useSelector(state => state.user);  // Redux에서 user 정보 가져오기
   const [sportDTO, setSportDTO] = useState({
-    userId: "yoohwanjoo@nate.com",  // 세션에서 가져온 userId로 업데이트 예정
+    userId: user ? user.userId : "",  // Redux에서 가져온 userId 사용
     sportItems: [
       {
         sportName: "",
@@ -23,26 +25,6 @@ const SportPlanForm = () => {
 
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState(null);
-
-  // 세션에서 userId를 가져오는 함수
-  const fetchUserId = async () => {
-    try {
-      const response = await axios.get("http://localhost:9999/auth/userinfo", {
-        withCredentials: true, // 쿠키(JSESSIONID)를 포함하여 요청
-      });
-      setSportDTO((prevState) => ({
-        ...prevState,
-        userId: response.data, // 세션에서 가져온 userId 설정
-      }));
-    } catch (error) {
-      setError("로그인 정보가 없습니다.");
-      console.error("Error fetching userId", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserId();  // 컴포넌트가 로드될 때 userId를 가져옴
-  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -129,15 +111,20 @@ const SportPlanForm = () => {
       }));
     }
   };
-
+  // 운동 계획 저장 처리
   const handleSavePlan = async (e) => {
     e.preventDefault();
+    const sportPlanToSave = {
+      ...sportDTO,
+      userId: user.userId,
+    };
+
     try {
-      const response = await axios.post("http://localhost:9999/sport/save/plan", sportDTO, {
-        withCredentials: true,  // 쿠키를 포함하여 요청
+      const response = await axios.post("http://localhost:9999/sport/save/plan", sportPlanToSave, {
+        withCredentials: true,
       });
-      alert(response.data); // 알림 메시지
-      window.location.reload(); // 페이지 새로고침
+      alert(response.data);
+      window.location.reload();
     } catch (error) {
       console.error("Error saving sport plan", error);
     }
@@ -145,11 +132,16 @@ const SportPlanForm = () => {
 
   return (
     <CForm onSubmit={handleSavePlan}>
-      {error && <p style={{ color: "red" }}>{error}</p>}  {/* 에러 메시지 출력 */}
+      {user ? (
+        <h2>{user.name},{user.userId}님 운동을 계획해보세요!</h2>
+        ) : (
+        <h2>로그인 해주세요</h2>
+        )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {sportDTO.sportItems.map((sportItem, index) => (
         <div key={index}>
-          {index > 0 && <hr />} {/* 첫 번째 항목에는 구분선을 표시하지 않음 */}
+          {index > 0 && <hr />}
 
           <CRow>
             <CCol xs="12" md="6">
