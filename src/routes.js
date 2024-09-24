@@ -43,6 +43,7 @@ const Subscribe = React.lazy(()=> import('./views/alarm/subscribe/subscribe'))
 const SportPlanForm = React.lazy(()=> import('./views/Sport/addPlan/SportPlanForm'))
 const SportPlanView = React.lazy(()=> import('./views/Sport/showPlan/SportPlanView'))
 const ModifySportPlan = React.lazy(()=> import('./views/Sport/modifyPlan/ModifySportPlan'))
+const SportRecordView = React.lazy(()=> import('./views/Sport/showRecord/SportRecordView'))
 
 
 //sport
@@ -125,6 +126,7 @@ const routes = [
   { path: '/alarm/alarm', name: 'alarm', element: alarm },
   { path: '/Sport/addPlan', name: 'SportPlanForm', element: SportPlanForm },
   { path: '/Sport/showPlan', name: 'SportPlanView', element: SportPlanView },
+  { path: '/Sport/showRecord', name: 'SportRecordView', element: SportRecordView },
   { path: '/Sport/modify/plan/:id', name: 'ModifySportPlan', element: ModifySportPlan },
 
 

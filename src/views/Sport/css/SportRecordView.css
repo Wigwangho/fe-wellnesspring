@@ -1,0 +1,10 @@
+/* SportRecordView.css */
+.sortable-header {
+  cursor: pointer; /* 마우스가 올라갈 때 포인터 커서로 변경 */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sortable-header:hover {
+  background-color: #f0f0f0; /* 배경을 약간 어둡게 */
+  color: #007bff; /* 텍스트 색상을 파란색으로 변경 */
+}
