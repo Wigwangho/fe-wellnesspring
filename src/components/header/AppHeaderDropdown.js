@@ -13,6 +13,7 @@ import {
 import {
   cilBell,
   cilLockLocked,
+  cilUser,
 } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import { useSelector } from 'react-redux';
@@ -44,7 +45,10 @@ const AppHeaderDropdown = () => {
           </CDropdownToggle>
           <CDropdownMenu className="pt-0" placement="bottom-end">
             <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
-
+            <CDropdownItem style={{cursor: "pointer"}} onClick={() => {nav("/users/profile")}}>
+              <CIcon icon={cilUser} className="me-2" />
+              Profile
+            </CDropdownItem>
             <CDropdownDivider />
             <CDropdownItem href="#">
               <CIcon icon={cilLockLocked} className="me-2" />
@@ -72,56 +76,6 @@ const AppHeaderDropdown = () => {
     <>
       <CButton color='secondary' onClick={() => nav("/login")}>Login</CButton>
     </>
-  );
-};
-
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilTask} className="me-2" />
-          Tasks
-          <CBadge color="danger" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilCommentSquare} className="me-2" />
-          Comments
-          <CBadge color="warning" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
-        <CDropdownItem style={{cursor: "pointer"}} onClick={() => {nav("/users/profile")}}>
-          <CIcon icon={cilUser} className="me-2" />
-          Profile
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilSettings} className="me-2" />
-          Settings
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilCreditCard} className="me-2" />
-          Payments
-          <CBadge color="secondary" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownItem href="#">
-          <CIcon icon={cilFile} className="me-2" />
-          Projects
-          <CBadge color="primary" className="ms-2">
-            42
-          </CBadge>
-        </CDropdownItem>
-        <CDropdownDivider />
-        <CDropdownItem href="#">
-          <CIcon icon={cilLockLocked} className="me-2" />
-          Lock Account
-        </CDropdownItem>
-      </CDropdownMenu>
-    </CDropdown>
-  ) : ( // 로그인 안된 경우
-    <CButton color='secondary' onClick={() => nav("/login")}>Login</CButton>
   );
 }
 
