@@ -18,45 +18,78 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Register = () => {
-  /**
-   * @param {HTMLInputElement[]} inputs
-   */
+  /** @param {HTMLInputElement[]} inputs */
   const inputs = useRef([document.createElement("input")]);
   const nav = useNavigate();
   const [validated, setValidated] = useState(false);
   
   useEffect(() => {
-
-  });
+    inputs?.current[0].setCustomValidity('unchecked');
+  }, []);
 
   /**
-   * 개발용 input 요소 값 로깅
-   * @param {HTMLInputElement} element 
+   * 입력한 id가 이메일이면서 중복 확인 여부 확인
+   * @param {HTMLInputElement} element
    */
-  function logging(element) {
-    console.log(element.validity);
+  function switchValidId(element) {
+    const invalidText = ["올바른 이메일이 아닙니다", "아이디 중복 확인을 해야합니다"];
+    const invalidElement = element.nextSibling;
+
+    if (element.validity.patternMismatch) {
+      invalidElement.textContent = invalidText[0];
+    } else if (element.validity.customError) {
+      invalidElement.textContent = invalidText[1];
+    }
+  }
+
+  /**
+   * id 중복 체크
+   */
+  function idCheck() {
+    const idInput = inputs.current[0];
+
+    if(idInput.value.length > 0) { // 어떠한 이메일을 입력했고 그것이 조건에 맞는 이메일인 경우
+      axios.get("http://localhost:9999/auth/check", {
+        params: {idck: idInput.value},
+        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+      }).then((res) => {
+        if (res.status == 204) {
+          idInput.classList.add('is-valid');
+          idInput.classList.remove('is-invalid');
+          idInput.setCustomValidity('');
+          idInput.readOnly = true;
+          return;
+        } else if (res.status == 207) {
+          alert("아이디 중복, 사용불가");
+        }
+      }).catch(() => {
+        alert("에러가 발생했습니다\n다시 시도해 주십시오");
+      });
+    }
+
+    idInput.focus();
+    idInput.classList.add('is-invalid');
+    idInput.classList.remove('is-valid');
   }
 
   /**
    * 비밀번호, 비밀번호 확인 실시간 검사 효과
    * @param {HTMLInputElement} element 
-  */
+   */
   function passwordCheck(element) {
     if(element.name) {  // 비밀번호
-      // 비밀번호 유효성 검사
-      // 여기에 정규식 넣으면 됨
-      let check = element.value.length > 10;
-      switchValid(element, check);
+      let regExp = element.validity.valid;
+      switchValidPw(element, regExp);
     } else {  // 비밀번호 확인
-      let check = element.value === inputs.current[1].value;
-      switchValid(element, check);
+      let regExp = element.value === inputs.current[1].value;
+      switchValidPw(element, regExp);
     }
     
     /**
      * @param {HTMLInputElement} element 
      * @param {boolean} bool 
      */
-    function switchValid(element, bool) {
+    function switchValidPw(element, bool) {
       if(!element.value.length) { // 입력된 값이 없으면
         element.classList.add('is-invalid');
       } else if(bool) {  // 입력된 값이 있으면서 유효하면
@@ -70,18 +103,22 @@ const Register = () => {
       }
     }
   }
-  
+
+  /**
+   * 사용자가 입력한 정보로 회원가입 진행
+   * @param {SubmitEvent} event 
+   */
   function reqSignin(event) {
     event.preventDefault();
-    const form = event.currentTarget
-    
+    const form = event.currentTarget;
+  
     if (form.checkValidity() === false) {
       event.stopPropagation();
       setValidated(true);
     } else {
       setValidated(false);
       let user = {};
-
+    
       for (const element of inputs.current) {
         switch(element.name) {
           case 'birth':
@@ -95,6 +132,7 @@ const Register = () => {
             break;
           default:
             user = {...user, [element.name]: element.value};
+            break;
         }
       }
       
@@ -106,8 +144,24 @@ const Register = () => {
       }).catch(err => {
         alert("회원가입에 실패했습니다");
         console.log(err);
-      })
+      });
     }
+  }
+
+  /**
+   * 전화번호 입력시 - 자동 생성
+   * @param {HTMLInputElement} element
+   */
+  function phoneNumEffect(element) {
+    let value = element.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+    
+    if (value.length > 7) {
+      value = value.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3'); // 3-4-4 형식
+    } else if (value.length > 3 && value.length <= 7) {
+      value = value.replace(/(\d{3})(\d+)/, '$1-$2'); // 3자리 후 하이픈 추가
+    }
+
+    element.value = value;
   }
 
   return (
@@ -131,7 +185,9 @@ const Register = () => {
                       pattern='^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-_]+\.[a-zA-Z]{2,}$'
                       required
                       tooltipFeedback
+                      onChange={e => switchValidId(e.target)}
                     />
+                    <CButton type='button' color='secondary' variant='outline' onClick={idCheck}>Check</CButton>
                   </CInputGroup>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
@@ -144,6 +200,9 @@ const Register = () => {
                         className='form-control'
                         placeholder="Password"
                         feedbackInvalid="여기다가 비밀번호 조건 적어야 함"
+                        pattern='^[A-Za-z\d!@#$%*]{9,20}$'
+                        minLength={9}
+                        maxLength={20}
                         required
                         tooltipFeedback
                         onInput={e => passwordCheck(e.target)}
@@ -187,7 +246,7 @@ const Register = () => {
                       maxLength={13}
                       required
                       tooltipFeedback
-                      // onInput={e => logging(e.target)}
+                      onChange={e => phoneNumEffect(e.target)}
                     />
                   </CInputGroup>
                   <CInputGroup className="mb-3">
@@ -209,8 +268,6 @@ const Register = () => {
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
-                    <CInputGroupText>Gender</CInputGroupText>
-                    {/* 위, 아래 둘 중 하나 골라야 함 */}
                     <CFormInput placeholder='Gender' disabled></CFormInput>
                     <CInputGroupText>
                       <CFormCheck
