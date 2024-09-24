@@ -68,7 +68,7 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownHeader className="bg-body-secondary fw-semibold my-2">Settings</CDropdownHeader>
-        <CDropdownItem href="#">
+        <CDropdownItem style={{cursor: "pointer"}} onClick={() => {nav("/users/profile")}}>
           <CIcon icon={cilUser} className="me-2" />
           Profile
         </CDropdownItem>
@@ -99,7 +99,7 @@ const AppHeaderDropdown = () => {
     </CDropdown>
   ) : ( // 로그인 안된 경우
     <CButton color='secondary' onClick={() => nav("/login")}>Login</CButton>
-  )
+  );
 }
 
 export default AppHeaderDropdown
