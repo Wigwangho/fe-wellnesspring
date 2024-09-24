@@ -1,94 +1,135 @@
-import React, { useEffect, useState } from 'react';
-import { CCard, CCardBody, CCol, CCardHeader, CRow, CButton, CProgress, CTable, CTableBody, CTableDataCell,CTableHead, CTableHeaderCell,CTableRow  } from '@coreui/react';
-import { CChartBar, CChartPie } from '@coreui/react-chartjs';
-import axios from 'axios';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState } from 'react';
+import {
+  CContainer, CRow, CCol, CButton, CFormInput, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle
+} from '@coreui/react';
+import '@coreui/coreui/dist/css/coreui.min.css';
 
-function addFood() {
-  const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today);
+function AddFood() {
+  const [activeKey, setActiveKey] = useState(1);
+  const [searchString, setSearchString] = useState('');
+  const [foodData, setFoodData] = useState([]); // 검색된 음식 데이터를 저장할 상태
+  const [amount, setAmount] = useState(0); // 선택된 음식의 양
+  const [selectedFood, setSelectedFood] = useState(null); // 선택된 음식 정보
+  const [visible, setVisible] = useState(false); // 모달 표시 여부
 
-  // 날짜를 하루씩 증가시키는 함수
-  const incrementDate = () => {
-    setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() + 1)));
+  // 음식 검색 함수
+  const handleSearch = async () => {
+    try {
+      const response = await fetch(`http://localhost:9999/dashboard/meals/getNutrient?search_string=${searchString}`);
+      const data = await response.json();
+      setFoodData(data); // 음식 데이터를 상태에 저장
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
-  // 날짜를 하루씩 감소시키는 함수
-  const decrementDate = () => {
-    setSelectedDate(new Date(selectedDate.setDate(selectedDate.getDate() - 1)));
+  // 음식 추가 함수
+  const handleAddMeal = async () => {
+    if (selectedFood) {
+      try {
+        const response = await fetch('http://localhost:9999/dashboard/meals/addMealDetails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            meal_id: 1, // 여기서 meal_id는 고정되어 있지만 실제로는 다른 값으로 설정 가능
+            food_id: selectedFood.food_id,
+            amount: amount,
+          }),
+        });
+
+        if (response.ok) {
+          alert('음식이 성공적으로 추가되었습니다.');
+        } else {
+          alert('음식 추가에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('Error adding meal details:', error);
+      }
+    }
+
+    setVisible(false); // 모달 닫기
   };
 
   return (
-    <div>
-      <h2>Select a date</h2>
+    <CContainer>
+      {/* 제목 */}
+      <CRow className="mt-4 mb-3">
+        <CCol>
+          <h2>음식 추가</h2>
+        </CCol>
+      </CRow>
 
-      {/* DatePicker와 버튼을 세로로 배치 */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <DatePicker
-          selected={selectedDate}
-          onChange={(date) => setSelectedDate(date)}
-          dateFormat="yyyy/MM/dd"
-        />
+      {/* 음식 데이터베이스 검색 */}
+      <CRow className="mb-3 align-items-center">
+        <CCol xs="8">
+          <CFormInput
+            type="text"
+            placeholder="음식 데이터베이스를 이름으로 검색"
+            value={searchString}
+            onChange={(e) => setSearchString(e.target.value)} // 검색어 상태 업데이트
+          />
+        </CCol>
+        <CCol xs="4">
+          <CButton
+            color="success"
+            onClick={handleSearch} // 검색 버튼 클릭 시 API 호출
+          >
+            검색
+          </CButton>
+        </CCol>
+      </CRow>
 
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={decrementDate} style={{ marginRight: '10px' }}>⬅️</button>
-          <button onClick={incrementDate}>➡️</button>
-        </div>
-      </div>
+      {/* 검색 결과 표시 */}
+      <CRow className="mb-3">
+        <CCol>
+          <h5>검색 결과:</h5>
+          {foodData.length === 0 ? (
+            <p>검색된 음식이 없습니다.</p>
+          ) : (
+            foodData.map((food, index) => (
+              <CRow key={index} className="mb-2">
+                <CCol xs="6">
+                  <CButton
+                    color="primary"
+                    onClick={() => {
+                      setSelectedFood(food);
+                      setVisible(true); // 모달을 열고, 선택한 음식 저장
+                    }}
+                  >
+                    {food.food_name}
+                  </CButton>
+                </CCol>
+                <CCol xs="4">
+                  <CFormInput
+                    type="number"
+                    placeholder="양 입력"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)} // 양 입력 값 업데이트
+                  />
+                </CCol>
+              </CRow>
+            ))
+          )}
+        </CCol>
+      </CRow>
 
-      {selectedDate && <p>Selected Date: {selectedDate.toDateString()}</p>}
-
-      {/* 아침 및 링크들 추가 */}
-      <div style={{ marginTop: '20px' }}>
-        <h3>아침</h3>
-        <a href="#add-food" style={{ marginRight: '10px' }}>음식 추가</a>
-        <a href="#quick-tools">빠른 도구</a>
-      </div>
-
-      {/* 구분선 */}
-      <hr style={{ margin: '20px 0' }} />
-
-      {/* 우측 하단에 테이블 추가 */}
-      <div style={{ position: 'absolute', bottom: '200px', right: '20px' }}>
-        <CTable border="1" style={{ borderCollapse: 'collapse', width: '400px' }}>
-          <CTableHead>
-          <CTableRow style={{ backgroundColor: 'blue', color: 'white' }}>
-            <CTableHeaderCell scope="col">칼로리</CTableHeaderCell>
-            <CTableHeaderCell scope="col">단백질</CTableHeaderCell>
-            <CTableHeaderCell scope="col">탄수화물</CTableHeaderCell>
-            <CTableHeaderCell scope="col">지방</CTableHeaderCell>
-            <CTableHeaderCell scope="col">나트륨</CTableHeaderCell>
-          </CTableRow>
-          </CTableHead>
-          <CTableBody>
-          <CTableRow>
-            <CTableHeaderCell>2000</CTableHeaderCell>
-            <CTableHeaderCell>50g</CTableHeaderCell>
-            <CTableHeaderCell>300g</CTableHeaderCell>
-            <CTableHeaderCell>70g</CTableHeaderCell>
-            <CTableHeaderCell>2400mg</CTableHeaderCell>
-          </CTableRow>
-          <CTableRow>
-            <CTableHeaderCell>2500</CTableHeaderCell>
-            <CTableHeaderCell>60g</CTableHeaderCell>
-            <CTableHeaderCell>350g</CTableHeaderCell>
-            <CTableHeaderCell>80g</CTableHeaderCell>
-            <CTableHeaderCell>2500mg</CTableHeaderCell>
-          </CTableRow>
-          <CTableRow>
-            <CTableHeaderCell>500</CTableHeaderCell>
-            <CTableHeaderCell>10g</CTableHeaderCell>
-            <CTableHeaderCell>50g</CTableHeaderCell>
-            <CTableHeaderCell>10g</CTableHeaderCell>
-            <CTableHeaderCell>100mg</CTableHeaderCell>
-          </CTableRow>
-          </CTableBody>
-        </CTable>
-      </div>
-    </div>
+      {/* 모달 */}
+      <CModal visible={visible} onClose={() => setVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>음식 추가 확인</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <p>해당 식사에 {selectedFood?.food_name}을(를) 추가할까요?</p>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>아니오</CButton>
+          <CButton color="primary" onClick={handleAddMeal}>예</CButton>
+        </CModalFooter>
+      </CModal>
+    </CContainer>
   );
 }
 
-
-export default addFood;
+export default AddFood;
