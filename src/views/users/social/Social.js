@@ -32,7 +32,7 @@ function Social() {
   }, []);
 
   /**
-   * 카카오로 로그인하러 보내는 함수
+   * 카카오 계정 정보 제공 동의하러 보내는 함수
    */
   function kakaoAgree() {
     const api_key = "b9f133be5346a55f04808ed817f6a6ca";
@@ -74,9 +74,6 @@ function Social() {
           </CCardBody>
         </CCard>
 		</CModalBody>
-		<CModalFooter>
-			싹 다 구현 필요
-		</CModalFooter>
   </>);
 }
 

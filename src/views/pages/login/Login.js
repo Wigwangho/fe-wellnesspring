@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   CButton,
@@ -23,6 +23,28 @@ const Login = () => {
   const inputs = useRef([]);
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const dispatcher = useDispatch();
+
+  useEffect(() => {
+    // 소셜(카카오) 로그인 동의 후 리다이렉트 된 것인지 확인
+    const url_params = new URL(window.location.href).searchParams;
+    const code = url_params?.get("code");
+    const state = url_params?.get("state");
+    const error = url_params?.get("error");
+    const error_description = url_params?.get("error_description");
+    let reqFnId = 0;
+    
+    if (error != null && error.length) {
+      console.log(error);
+      console.log(error_description);
+      alert("카카오 로그인을 취소 하셨습니다\n" + error_description);
+      nav("/login");
+    } else if (code != null && code.length && state == "wellnesspring") {
+      reqFnId = setTimeout(() => useKakao(code), 500);
+    }
+
+    return () => clearTimeout(reqFnId);
+  });
 
   /**
    * 버튼 클릭 대행 이벤트
@@ -59,8 +81,7 @@ const Login = () => {
   }
 
   /**
-   * 카카오로 ~~
-   * @todo 사용자 정보에 접근할 뭔가를 받아서 요청 보내기
+   * 카카오로 로그인하러 보내는 함수
    */
   function reqSignKakao() {
     const api_key = "b9f133be5346a55f04808ed817f6a6ca";
@@ -68,6 +89,21 @@ const Login = () => {
     const request_url = `https://kauth.kakao.com/oauth/authorize?client_id=${api_key}&redirect_uri=${redirect_url}&response_type=code&state=wellnesspring`;
 
     window.location.href = request_url;
+  }
+
+  /**
+   * 카카오에서 받은 인가코드로 로그인 처리
+   * @param {string} code 
+   */
+  function useKakao(code) {
+    axios.get("http://localhost:9999/auth/kakao?code=" + code)
+    .then(res => {
+      dispatcher({type: "set", user: res.data});
+      nav("/dashboard");
+    }).catch(err => {
+      alert("소셜 로그인이 등록된 계정이 없습니다");
+      nav("/login");
+    });
   }
 
   return (
