@@ -32,9 +32,8 @@ export function reqSignKakao() {
 
 const Login = () => {
   const inputs = useRef([]);
-  const dispatch = useDispatch();
-  const nav = useNavigate();
   const dispatcher = useDispatch();
+  const nav = useNavigate();
 
   useEffect(() => {
     // 소셜(카카오) 로그인 동의 후 리다이렉트 된 것인지 확인
@@ -79,7 +78,8 @@ const Login = () => {
       
       axios.post("http://localhost:9999/auth/signinProc", user, {withCredentials: true})
       .then((res) => {
-        dispatch({type: "set", user: res.data});
+        dispatcher({type: "set", user: res.data});
+        sessionStorage.setItem("wellnessUser", JSON.stringify(res.data));
         nav("/dashboard");
       }).catch((err) => {
         if (err?.status === 401) {

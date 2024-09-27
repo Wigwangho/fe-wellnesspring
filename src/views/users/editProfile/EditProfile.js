@@ -64,7 +64,6 @@ function EditProfile() {
       
       userData["birthday"] = someDate;
       userData["gender"] = userData.serialNumF.charAt(6) * 1 % 2 ? "M" : "F";
-      console.log(userData);
       setUserFull(userData);
     }).catch(err => {
       alert("사용자 정보 불러오기에 실패했습니다 다시 시도해주십시오");
@@ -114,7 +113,8 @@ function EditProfile() {
       
       axios.put("http://localhost:9999/user/profile/edit", formData, {headers: {'Content-Type': 'multipart/form-data'}})
       .then(res => {
-        dispatcher({type: 'set', user: res.data})
+        dispatcher({type: 'set', user: res.data});
+        sessionStorage.setItem("wellnessUser", JSON.stringify(res.data));
         alert("프로필이 수정되었습니다");
       }).catch(res => {
         alert("프로필 수정에 실패했습니다");
