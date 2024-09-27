@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import KakaoImg from "src/images/kakao_login_medium_narrow.png";
+import { reqSignKakao } from "../../pages/login/Login";
 
 function Social() {
   const nav = useNavigate();
@@ -32,15 +33,11 @@ function Social() {
   }, []);
 
   /**
-   * 카카오 계정 정보 제공 동의하러 보내는 함수
+   * 카카오 계정 정보 제공 동의하러 보내는 fn
    */
   function kakaoAgree() {
-    const api_key = "b9f133be5346a55f04808ed817f6a6ca";
-    const redirect_url = "http://localhost:3000/users/profile";
-    const request_url = `https://kauth.kakao.com/oauth/authorize?client_id=${api_key}&redirect_uri=${redirect_url}&response_type=code&state=wellnesspring`;
-
     sessionStorage.setItem("userId", user.userId);
-    window.location.href = request_url;
+    reqSignKakao();
   }
   
   /**

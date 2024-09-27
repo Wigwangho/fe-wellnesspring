@@ -19,6 +19,17 @@ import { cilLockLocked, cilUser } from '@coreui/icons'
 import axios from 'axios'
 import { useDispatch } from 'react-redux'
 
+/**
+ * 카카오로 로그인하러 보내는 fn
+ */
+export function reqSignKakao() {
+  const api_key = "b9f133be5346a55f04808ed817f6a6ca";
+  const redirect_url = new URL(window.location.href).href;
+  const request_url = `https://kauth.kakao.com/oauth/authorize?client_id=${api_key}&redirect_uri=${redirect_url}&response_type=code&state=wellnesspring`;
+
+  window.location.href = request_url;
+}
+
 const Login = () => {
   const inputs = useRef([]);
   const dispatch = useDispatch();
@@ -78,17 +89,6 @@ const Login = () => {
     } else {
       alert("로그인에 실패했습니다\n잘못된 계정 및 비밀번호입니다");
     }
-  }
-
-  /**
-   * 카카오로 로그인하러 보내는 함수
-   */
-  function reqSignKakao() {
-    const api_key = "b9f133be5346a55f04808ed817f6a6ca";
-    const redirect_url = "http://localhost:3000/login";
-    const request_url = `https://kauth.kakao.com/oauth/authorize?client_id=${api_key}&redirect_uri=${redirect_url}&response_type=code&state=wellnesspring`;
-
-    window.location.href = request_url;
   }
 
   /**

@@ -33,7 +33,7 @@ function Profile() {
               {menuList[0][i]}
             </CCardBody>
           </CCard>
-          <CModal visible={showModals[i]} size="lg" onClose={() => setShowModals(showModals.map((val, idx) => (idx === i ? false : val)))}>  
+          <CModal visible={showModals[i]} size="lg" backdrop={"static"} onClose={() => setShowModals(showModals.map((val, idx) => (idx === i ? false : val)))}>  
             {<Menu/>}
           </CModal>
         </>);
