@@ -12,6 +12,7 @@ import {
   cilPuzzle,
   cilSpeedometer,
   cilStar, cilWeightlifitng,
+  cilDinner
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -46,12 +47,13 @@ const _nav = [
         name: 'Subscribe',
         to: '/alarm/subscribe',
       },
+
     ],
   },
   {
     component: CNavGroup,
     name: 'Sport',
-    icon: <CIcon icon={cilWeightlifitng} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilWeightlifitng} customClassName="nav-icon"/>,
     items: [
       {
         component: CNavItem,
@@ -70,6 +72,58 @@ const _nav = [
       },
     ],
   },
+  {
+    component: CNavGroup,
+    name: 'statistics',
+    icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: '음식',
+        to: '/dashboard/statistics/food',
+      },
+      {
+        component: CNavItem,
+        name: '운동',
+        to: '/dashboard/statistics/sport',
+      },
+      {
+        component: CNavItem,
+        name: '칼로리',
+        to: '/dashboard/statistics/kcal',
+      },
+      {
+        component: CNavItem,
+        name: '나의 수준',
+        to: '/dashboard/statistics/level',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Food',
+    icon: <CIcon icon={cilDinner} customClassName="nav-icon" />,
+    items: [
+
+      {
+        component: CNavItem,
+        name: '식사 추가',
+        to: '/dashboard/food/addMeals',
+      },
+
+      {
+        component: CNavItem,
+        name: '식사 정보 확인',
+        to: '/dashboard/food/selectMeals',
+      },
+      {
+        component: CNavItem,
+        name: '음식 정보 확인',
+        to: '/dashboard/food/selectNutrient',
+      },
+    ],
+  },
+
 
 
   {
@@ -244,12 +298,6 @@ const _nav = [
         to: '/forms/validation',
       },
     ],
-  },
-  {
-    component: CNavItem,
-    name: 'statistics',
-    to: '/dashboard/statistics',
-    icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
   },
 
 
