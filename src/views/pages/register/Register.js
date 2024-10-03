@@ -17,8 +17,23 @@ import { cilBirthdayCake, cilLockLocked, cilPhone, cilUser } from '@coreui/icons
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
+/**
+ * 전화번호 입력시 '-' 자동 생성
+ * @param {HTMLInputElement} element 전화번호를 입력할 input
+ */
+export function phoneNumEffect(element) {
+  let value = element.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
+  
+  if (value.length > 7) {
+    value = value.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3'); // 3-4-4 형식
+  } else if (value.length > 3 && value.length <= 7) {
+    value = value.replace(/(\d{3})(\d+)/, '$1-$2'); // 3자리 후 하이픈 추가
+  }
+
+  element.value = value;
+}
+
 const Register = () => {
-  /** @param {HTMLInputElement[]} inputs */
   const inputs = useRef([document.createElement("input")]);
   const nav = useNavigate();
   const [validated, setValidated] = useState(false);
@@ -110,24 +125,24 @@ const Register = () => {
    */
   function reqSignin(event) {
     event.preventDefault();
-    const form = event.currentTarget;
+    const avatar = [[2, 3, 6, 9], [1, 4, 5, 7, 8]];
   
-    if (form.checkValidity() === false) {
+    if (event.currentTarget.checkValidity() === false) {
       event.stopPropagation();
       setValidated(true);
     } else {
-      setValidated(false);
       let user = {};
     
       for (const element of inputs.current) {
         switch(element.name) {
-          case 'birth':
-            user = {...user, "serialNumF": element.value.split("-").join("").substring(2).concat(element.value.substring(0,2) < 20 ? 1 : 3)};
+          case 'birthday':
+            user["serialNumF"] = element.value.split("-").join("").substring(2).concat(element.value.substring(0,2) < 20 ? 1 : 3);
             break;
           case 'gender':
             const gender = element.value == "M" ? 0 : 1;
             if(element.checked) {
-              user = {...user, "serialNumF": user.serialNumF.substring(0, 6) + (Number(user.serialNumF.substring(6)) + gender)};
+              user["serialNumF"] = user.serialNumF.substring(0, 6) + (Number(user.serialNumF.substring(6)) + gender);
+              user["profileImg"] = avatar[gender][Math.random() * avatar[gender].length];
             }
             break;
           default:
@@ -145,23 +160,8 @@ const Register = () => {
         alert("회원가입에 실패했습니다");
         console.log(err);
       });
+      setValidated(false);
     }
-  }
-
-  /**
-   * 전화번호 입력시 - 자동 생성
-   * @param {HTMLInputElement} element
-   */
-  function phoneNumEffect(element) {
-    let value = element.value.replace(/[^0-9]/g, ''); // 숫자만 남기기
-    
-    if (value.length > 7) {
-      value = value.replace(/(\d{3})(\d{4})(\d+)/, '$1-$2-$3'); // 3-4-4 형식
-    } else if (value.length > 3 && value.length <= 7) {
-      value = value.replace(/(\d{3})(\d+)/, '$1-$2'); // 3자리 후 하이픈 추가
-    }
-
-    element.value = value;
   }
 
   return (
@@ -171,7 +171,7 @@ const Register = () => {
           <CCol md={9} lg={7} xl={6}>
             <CCard className="mx-4">
               <CCardBody className="p-4">
-                <CForm className="needs-validation" validated={validated} onSubmit={reqSignin} noValidate >
+                <CForm className="needs-validation" validated={validated} onSubmit={reqSignin} noValidate>
                   <h1>Register</h1>
                   <p className="text-body-secondary">Create your account</p>
                   <CInputGroup className="mb-3">
@@ -199,7 +199,7 @@ const Register = () => {
                         name='userPw'
                         className='form-control'
                         placeholder="Password"
-                        feedbackInvalid="여기다가 비밀번호 조건 적어야 함"
+                        feedbackInvalid="영 대소문자, 숫자, 특수문자(!@#$%*) 사용가능, 9~20자"
                         pattern='^[A-Za-z\d!@#$%*]{9,20}$'
                         minLength={9}
                         maxLength={20}
@@ -257,7 +257,7 @@ const Register = () => {
                     <CFormInput
                       type='date'
                       ref={e => inputs.current[4] = e}
-                      name='birth'
+                      name='birthday'
                       placeholder="Birthday"
                       defaultValue={"2000-01-01"}
                       required

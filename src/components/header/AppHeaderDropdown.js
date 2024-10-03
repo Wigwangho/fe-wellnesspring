@@ -19,8 +19,8 @@ import CIcon from '@coreui/icons-react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import avatar8 from './../../assets/images/avatars/8.jpg';
 import AlertPopup from 'src/views/alarm/alarm/AlertPopup';
+import { chooseAvatar } from '../../views/users/editProfile/EditProfile';
 
 const AppHeaderDropdown = () => {
   const nav = useNavigate();
@@ -41,7 +41,7 @@ const AppHeaderDropdown = () => {
         {/* 아바타 드롭다운 */}
         <CDropdown variant="nav-item">
           <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
-            <CAvatar src={avatar8} size="md" />
+            <CAvatar src={chooseAvatar(user?.profileImg)} size="md" className='avatar-overfit' />
           </CDropdownToggle>
           <CDropdownMenu className="pt-0" placement="bottom-end">
             <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">Account</CDropdownHeader>
