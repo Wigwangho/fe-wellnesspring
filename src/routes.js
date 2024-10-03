@@ -46,11 +46,13 @@ const ModifySportPlan = React.lazy(()=> import('./views/Sport/modifyPlan/ModifyS
 const SportRecordView = React.lazy(()=> import('./views/Sport/showRecord/SportRecordView'))
 
 
-//sport
+//Food
 const addFood = React.lazy(()=> import('./views/food/addFood/addFood'))
 const addMeals = React.lazy(()=> import('./views/food/addMeals/addMeals'))
 const mealModify = React.lazy(()=> import('./views/food/mealModify/mealModify'))
 const selectNutrient = React.lazy(()=> import('./views/food/selectNutrient/selectNutrient'))
+const selectMeals = React.lazy(()=> import('./views/food/selectMeals/selectMeals'))
+
 //statistics
 const Charts = React.lazy(() => import('./views/charts/Charts'))
 const statistics = React.lazy(()=> import('./views/statistics/statistics'))
@@ -137,6 +139,7 @@ const routes = [
   { path: '/dashboard/food/addMeals', name: 'addMeals', element: addMeals },
   { path: '/dashboard/food/mealModify', name: 'mealModify', element: mealModify },
   { path: '/dashboard/food/selectNutrient', name: 'selectNutrient', element: selectNutrient },
+  { path: '/dashboard/food/selectMeals', name: 'selectMeals', element: selectMeals },
 
 
   { path: '/users', element: Profile, exact: true },

@@ -1,45 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   CContainer, CRow, CCol, CButton, CFormInput, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle
 } from '@coreui/react';
+import axios from 'axios';
 import '@coreui/coreui/dist/css/coreui.min.css';
 
 function AddFood() {
-  const [activeKey, setActiveKey] = useState(1);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const meal_id = queryParams.get('meal_id');
   const [searchString, setSearchString] = useState('');
-  const [foodData, setFoodData] = useState([]); // 검색된 음식 데이터를 저장할 상태
-  const [amount, setAmount] = useState(0); // 선택된 음식의 양
-  const [selectedFood, setSelectedFood] = useState(null); // 선택된 음식 정보
-  const [visible, setVisible] = useState(false); // 모달 표시 여부
+  const [foodData, setFoodData] = useState([]);
+  const [amount, setAmount] = useState(0);
+  const [selectedFood, setSelectedFood] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [favorFood, setFavorFood] = useState([]); // 좋아하는 음식 목록 상태 추가
 
-  // 음식 검색 함수
+  useEffect(() => {
+    const fetchFavorFood = async () => {
+      try {
+        const userId = 'userid_test'; // 실제 사용자 ID로 대체
+        const response = await axios.get(`http://localhost:9999/dashboard/meals/getFavorFood?user_id=${userId}`);
+        setFavorFood(response.data); // 좋아하는 음식 목록을 상태에 저장
+      } catch (error) {
+        console.error('Error fetching favorite food:', error);
+      }
+    };
+
+    fetchFavorFood(); // 컴포넌트가 마운트될 때 좋아하는 음식 목록을 가져옴
+  }, []);
+
   const handleSearch = async () => {
+    if (!searchString) return; // 빈 검색어는 무시
+
     try {
-      const response = await fetch(`http://localhost:9999/dashboard/meals/getNutrient?search_string=${searchString}`);
-      const data = await response.json();
-      setFoodData(data); // 음식 데이터를 상태에 저장
+      const response = await axios.get(`http://localhost:9999/dashboard/meals/getNutrient?search_string=${searchString}`);
+      setFoodData(response.data);
+
+      // 검색이 성공적이면 검색 기록에 추가
+      if (!searchHistory.includes(searchString)) {
+        setSearchHistory((prevHistory) => [searchString, ...prevHistory]);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  // 음식 추가 함수
+  const handleSearchFromHistory = (historyItem) => {
+    setSearchString(historyItem); // 클릭한 검색 기록으로 검색어 설정
+    handleSearch(); // 검색 실행
+  };
+
   const handleAddMeal = async () => {
     if (selectedFood) {
-      try {
-        const response = await fetch('http://localhost:9999/dashboard/meals/addMealDetails', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            meal_id: 1, // 여기서 meal_id는 고정되어 있지만 실제로는 다른 값으로 설정 가능
-            food_id: selectedFood.food_id,
-            amount: amount,
-          }),
-        });
+      const parsedMealId = parseInt(meal_id, 10);
+      const parsedFoodId = parseInt(selectedFood.id, 10);
+      const parsedAmount = parseFloat(amount);
 
-        if (response.ok) {
+      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        alert('입력량을 다시 확인해 주세요.');
+        return;
+      } else if (isNaN(parsedMealId)) {
+        alert('잘못된 url을 사용하고 있습니다.');
+        return;
+      } else if (isNaN(parsedFoodId)) {
+        alert('음식을 다시 검색해 주세요.');
+        return;
+      }
+
+      try {
+        const response = await axios.post('http://localhost:9999/dashboard/meals/addMealDetails', new URLSearchParams({
+          meal_id: parsedMealId,
+          food_id: parsedFoodId,
+          amount: parsedAmount,
+        }));
+
+        if (response.status === 200) {
           alert('음식이 성공적으로 추가되었습니다.');
         } else {
           alert('음식 추가에 실패했습니다.');
@@ -49,39 +87,70 @@ function AddFood() {
       }
     }
 
-    setVisible(false); // 모달 닫기
+    setVisible(false);
   };
 
   return (
     <CContainer>
-      {/* 제목 */}
       <CRow className="mt-4 mb-3">
         <CCol>
           <h2>음식 추가</h2>
         </CCol>
       </CRow>
 
-      {/* 음식 데이터베이스 검색 */}
       <CRow className="mb-3 align-items-center">
         <CCol xs="8">
           <CFormInput
             type="text"
             placeholder="음식 데이터베이스를 이름으로 검색"
             value={searchString}
-            onChange={(e) => setSearchString(e.target.value)} // 검색어 상태 업데이트
+            onChange={(e) => setSearchString(e.target.value)}
           />
         </CCol>
         <CCol xs="4">
-          <CButton
-            color="success"
-            onClick={handleSearch} // 검색 버튼 클릭 시 API 호출
-          >
-            검색
-          </CButton>
+          <CButton color="success" onClick={handleSearch}>검색</CButton>
         </CCol>
       </CRow>
 
-      {/* 검색 결과 표시 */}
+      {/* 최근 검색 기록 표시 */}
+      {searchHistory.length > 0 && (
+        <CRow className="mb-3">
+          <CCol>
+            <h5>최근 검색 기록:</h5>
+            {searchHistory.map((historyItem, index) => (
+              <CButton
+                key={index}
+                color="link"
+                onClick={() => handleSearchFromHistory(historyItem)}
+              >
+                {historyItem}
+              </CButton>
+            ))}
+          </CCol>
+        </CRow>
+      )}
+
+      {/* 좋아하는 음식 표시 */}
+      {favorFood.length > 0 && (
+        <CRow className="mb-3">
+          <CCol>
+            <h5>좋아하는 음식:</h5>
+            {favorFood.map((food, index) => (
+              <CButton
+                key={index}
+                color="link"
+                onClick={() => {
+                  setSearchString(food.food_name); // 음식 이름으로 검색어 설정
+                  handleSearch(); // 검색 실행
+                }}
+              >
+                {food.food_name}
+              </CButton>
+            ))}
+          </CCol>
+        </CRow>
+      )}
+
       <CRow className="mb-3">
         <CCol>
           <h5>검색 결과:</h5>
@@ -89,25 +158,43 @@ function AddFood() {
             <p>검색된 음식이 없습니다.</p>
           ) : (
             foodData.map((food, index) => (
-              <CRow key={index} className="mb-2">
+              <CRow key={index} className="mb-2 align-items-center">
                 <CCol xs="6">
-                  <CButton
-                    color="primary"
-                    onClick={() => {
-                      setSelectedFood(food);
-                      setVisible(true); // 모달을 열고, 선택한 음식 저장
-                    }}
-                  >
-                    {food.food_name}
-                  </CButton>
+                  <span>{food.food_name}</span>
                 </CCol>
                 <CCol xs="4">
                   <CFormInput
                     type="number"
                     placeholder="양 입력"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)} // 양 입력 값 업데이트
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (!isNaN(value) && value.trim() !== '') {
+                        setAmount(value);
+                      } else {
+                        setAmount(0);
+                      }
+                    }}
                   />
+                </CCol>
+                <CCol xs="2" className="d-flex justify-content-between">
+                  <CButton
+                    color="primary"
+                    onClick={() => {
+                      setSelectedFood(food);
+                      setVisible(true);
+                    }}
+                  >
+                    추가
+                  </CButton>
+                  <CButton
+                    color="secondary"
+                    onClick={() => {
+                      setAmount(0); // 초기화 버튼 클릭 시 amount를 0으로 설정
+                    }}
+                  >
+                    초기화
+                  </CButton>
                 </CCol>
               </CRow>
             ))
@@ -115,7 +202,6 @@ function AddFood() {
         </CCol>
       </CRow>
 
-      {/* 모달 */}
       <CModal visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>
           <CModalTitle>음식 추가 확인</CModalTitle>
