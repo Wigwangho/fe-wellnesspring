@@ -37,7 +37,7 @@ const AppHeaderDropdown = () => {
 
   return user ? (
     <>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div className='d-flex' style={{alignItems: 'center'}}>
         {/* 아바타 드롭다운 */}
         <CDropdown variant="nav-item">
           <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>

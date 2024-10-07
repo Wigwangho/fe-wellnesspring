@@ -1,4 +1,4 @@
-import { CCard, CCardBody, CCol, CImage, CModalBody, CModalFooter, CModalHeader, CModalTitle } from "@coreui/react";
+import { CCard, CCardBody, CCol, CImage, CModalBody, CModalHeader, CModalTitle } from "@coreui/react";
 import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -65,7 +65,7 @@ function Social() {
 		<CModalBody>
       {/* 나중에 소셜 로그인 종류가 추가되면 동적으로 만들어야함 */}
         <CCard className="mb-4">
-          <CCardBody style={{display: "flex", justifyContent: "space-between"}}>
+          <CCardBody className="d-flex" style={{justifyContent: "space-between"}}>
             <p style={{fontSize: "x-large", margin: "auto 0"}}>Kakao</p>
             <CImage align="end" src={KakaoImg} onClick={kakaoAgree} />
           </CCardBody>

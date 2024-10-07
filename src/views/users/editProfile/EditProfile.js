@@ -1,8 +1,10 @@
 import { cilBirthdayCake, cilLockLocked, cilPhone, cilUser } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 import { CButton, CCard, CCardBody, CCol, CForm, CFormCheck, CFormInput, CImage, CInputGroup, CInputGroupText, CModalBody, CModalFooter, CModalHeader, CModalTitle, CRow } from "@coreui/react";
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { phoneNumEffect } from "../../pages/register/Register";
 
 import avatar1 from './../../../assets/images/avatars/1.jpg';
@@ -14,7 +16,6 @@ import avatar6 from './../../../assets/images/avatars/6.jpg';
 import avatar7 from './../../../assets/images/avatars/7.jpg';
 import avatar8 from './../../../assets/images/avatars/8.jpg';
 import avatar9 from './../../../assets/images/avatars/9.jpg';
-import axios from "axios";
 
 /** 
  * 사용자의 프로필 이미지 선택
@@ -29,6 +30,7 @@ function EditProfile() {
   const inputs = useRef([document.createElement("input")]);
   const user = useSelector(store => store.user);
   const dispatcher = useDispatch();
+  const nav = useNavigate();
   const [userFull, setUserFull] = useState(false ? {
     "name" : "",
     "serialNumF" : "",
@@ -125,13 +127,31 @@ function EditProfile() {
     }
   }
 
+  /**
+   * 계정 삭제 진행
+   */
+  function reqDelete() {
+    if(confirm("계정 삭제는 돌이킬 수 없습니다.\n정말로 계정을 삭제하시겠습니까?")) {
+      axios.delete("http://localhost:9999/user/goodbye?userId=" + user.userId)
+      .then(res => {
+        alert("계정이 삭제되었습니다");
+        nav("/dashboard");
+        sessionStorage.removeItem("wellnessUser");
+        sessionStorage.removeItem("userId");
+        dispatcher({type: "set", user: null})
+      }).catch(res => {
+        alert("계정 삭제에 실패했습니다");
+      });
+    }
+  }
+
   return (<>
     <CModalHeader>
       <CModalTitle>프로필</CModalTitle>
     </CModalHeader>
 		<CModalBody>
       <CRow className="mb-4">
-        <CCol className="justify-content-center" style={{display: "flex"}}>
+        <CCol className="justify-content-center d-flex">
           <CImage
             src={chooseAvatar(userFull.profileImg)}
             width={150}
@@ -280,8 +300,9 @@ function EditProfile() {
                     onInput={e => valueTyping(e.target)}
 									/>
 							</CInputGroup>
-							<div className="d-grid">
-								<CButton type='submit' color="success">프로필 수정</CButton>
+							<div className="d-flex" style={{justifyContent: "space-around"}}>
+								<CButton type='submit' color="success" style={{width: "150px"}}>프로필 수정</CButton>
+								<CButton type='button' color="danger" style={{width: "150px"}} onClick={reqDelete}>계정삭제</CButton>
 							</div>
 						</CForm>
 					</CCardBody>
