@@ -12,19 +12,39 @@ import {
 } from '@coreui/react';
 import {
   cilBell,
-  cilLockLocked,
+  cilAccountLogout,
   cilUser,
 } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AlertPopup from 'src/views/alarm/alarm/AlertPopup';
 import { chooseAvatar } from '../../views/users/editProfile/EditProfile';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * 로그아웃 진행
+ * @param {string} msg 로그아웃시 사용자에게 보여줄 메세지(기본값: 로그아웃 되었습니다)
+ * @param {import('react-router-dom').NavigateFunction} nav useNavigate의 반환 함수 (!필수!)
+ * @param {import('redux').Dispatch} dispatcher useDispatch의 반환 함수 (!필수!)
+*/
+export function logOut(msg, nav, dispatcher) {
+  if(msg == null || msg.length < 1) msg = '로그아웃 되었습니다';
+  if(nav != null && dispatcher != null) {
+    alert(msg);
+    nav("/dashboard");
+    sessionStorage.removeItem("wellnessUser");
+    sessionStorage.removeItem("userId");
+    dispatcher({type: "set", user: null});
+  } else {
+    alert("로그아웃 중 문제가 발생하였습니다");
+  }
+}
 
 const AppHeaderDropdown = () => {
   const nav = useNavigate();
   const user = useSelector(state => state.user);
+  const dispatcher = useDispatch();
 
   // 알림 모달을 위한 상태 관리
   const [showNotifications, setShowNotifications] = useState(false);
@@ -50,9 +70,9 @@ const AppHeaderDropdown = () => {
               Profile
             </CDropdownItem>
             <CDropdownDivider />
-            <CDropdownItem href="#">
-              <CIcon icon={cilLockLocked} className="me-2" />
-              Lock Account
+            <CDropdownItem onClick={e => logOut(null, nav, dispatcher)}>
+              <CIcon icon={cilAccountLogout} className="me-2" />
+              Log Out
             </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
@@ -74,7 +94,7 @@ const AppHeaderDropdown = () => {
     </>
   ) : ( // 로그인 안된 경우
     <>
-      <CButton color='secondary' onClick={() => nav("/login")}>Login</CButton>
+      <CButton color='secondary' onClick={() => nav("/login")}>Log In</CButton>
     </>
   );
 }

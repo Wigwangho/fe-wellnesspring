@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { phoneNumEffect } from "../../pages/register/Register";
+import { logOut } from "../../../components/header/AppHeaderDropdown";
 
 import avatar1 from './../../../assets/images/avatars/1.jpg';
 import avatar2 from './../../../assets/images/avatars/2.jpg';
@@ -134,11 +135,7 @@ function EditProfile() {
     if(confirm("계정 삭제는 돌이킬 수 없습니다.\n정말로 계정을 삭제하시겠습니까?")) {
       axios.delete("http://localhost:9999/user/goodbye?userId=" + user.userId)
       .then(res => {
-        alert("계정이 삭제되었습니다");
-        nav("/dashboard");
-        sessionStorage.removeItem("wellnessUser");
-        sessionStorage.removeItem("userId");
-        dispatcher({type: "set", user: null})
+        logOut("계정이 삭제되었습니다", nav, dispatcher);
       }).catch(res => {
         alert("계정 삭제에 실패했습니다");
       });
