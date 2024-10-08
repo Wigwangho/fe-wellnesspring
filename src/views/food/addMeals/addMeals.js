@@ -69,6 +69,11 @@ function AddMeals() {
   const ThisUserId = 'userid_test';
 
   const handleAddMeal = () => {
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
     if (!newMealName) {
       alert('식사 이름을 입력하세요.');
       return;
@@ -78,18 +83,18 @@ function AddMeals() {
       params: {
         meal: newMealName,
         user_id: ThisUserId,
+        date: formattedDate
       },
     })
       .then(response => {
         console.log('식사 추가 성공:', response.data);
-        fetchMealData(selectedDate);
-        setNewMealName('');
+        fetchMealData(selectedDate);  // 선택된 날짜의 데이터를 다시 가져옴
+        setNewMealName('');  // 입력 필드 초기화
       })
       .catch(error => {
         console.error('Error adding meal:', error);
       });
   };
-
   const handleDeleteMeal = (mealId) => {
     if (window.confirm('정말로 이 식사를 삭제하시겠습니까?')) {
       axios.post(`http://localhost:9999/dashboard/meals/deleteMeal`, null, {
@@ -182,16 +187,14 @@ function AddMeals() {
 
   return (
     <div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'left' }}>
+        <CButton color = "link" onClick={decrementDate} style={{ marginRight: '10px' }}>⬅️</CButton>
         <DatePicker
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
           dateFormat="yyyy/MM/dd"
         />
-        <div style={{ marginTop: '10px' }}>
-          <button onClick={decrementDate} style={{ marginRight: '10px' }}>⬅️</button>
-          <button onClick={incrementDate}>➡️</button>
-        </div>
+        <CButton color = "link" onClick={incrementDate}>➡️</CButton>
       </div>
 
       {/* 데이터가 없을 때 메시지 표시 */}
@@ -267,7 +270,7 @@ function AddMeals() {
           placeholder="식사 이름 입력"
           style={{ marginRight: '10px' }}
         />
-        <button onClick={handleAddMeal}>새로운 식사 추가</button>
+        <CButton color = "link" onClick={handleAddMeal}>새로운 식사 추가</CButton>
       </div>
 
       {/* CoreUI 모달 창 */}

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+const Dashboard = React.lazy(() => import('./views/statistics/statistics'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -103,11 +103,11 @@ const routes = [
   { path: '/buttons/dropdowns', name: 'Dropdowns', element: Dropdowns },
   { path: '/buttons/button-groups', name: 'Button Groups', element: ButtonGroups },
   { path: '/charts', name: 'Charts', element: Charts },
-  { path: '/dashboard/statistics', name: 'statistics', element: statistics },
-  { path: '/dashboard/statistics/food', name: 'food', element: food },
-  { path: '/dashboard/statistics/kcal', name: 'kcal', element: kcal },
-  { path: '/dashboard/statistics/level', name: 'level', element: level },
-  { path: '/dashboard/statistics/sport', name: 'sport', element: sport },
+  { path: '/statistics', name: 'statistics', element: statistics },
+  { path: '/statistics/food', name: 'food', element: food },
+  { path: '/statistics/kcal', name: 'kcal', element: kcal },
+  { path: '/statistics/level', name: 'level', element: level },
+  { path: '/statistics/sport', name: 'sport', element: sport },
   { path: '/forms', name: 'Forms', element: FormControl, exact: true },
   { path: '/forms/form-control', name: 'Form Control', element: FormControl },
   { path: '/forms/select', name: 'Select', element: Select },
@@ -135,11 +135,11 @@ const routes = [
   { path: '/Sport/modify/plan/:id', name: 'ModifySportPlan', element: ModifySportPlan },
 
 
-  { path: '/dashboard/food/addFood', name: 'addFood', element: addFood },
-  { path: '/dashboard/food/addMeals', name: 'addMeals', element: addMeals },
-  { path: '/dashboard/food/mealModify', name: 'mealModify', element: mealModify },
-  { path: '/dashboard/food/selectNutrient', name: 'selectNutrient', element: selectNutrient },
-  { path: '/dashboard/food/selectMeals', name: 'selectMeals', element: selectMeals },
+  { path: '/food/addFood', name: 'addFood', element: addFood },
+  { path: '/food/addMeals', name: 'addMeals', element: addMeals },
+  { path: '/food/mealModify', name: 'mealModify', element: mealModify },
+  { path: '/food/selectNutrient', name: 'selectNutrient', element: selectNutrient },
+  { path: '/food/selectMeals', name: 'selectMeals', element: selectMeals },
 
 
   { path: '/users', element: Profile, exact: true },
