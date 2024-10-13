@@ -21,7 +21,13 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 # Install node modules
-COPY package-lock.json package.json ./
+# package.json과 package-lock.json 복사
+COPY package.json ./
+COPY package-lock.json ./
+
+# 의존성 설치
+RUN npm install
+
 RUN npm ci --include=dev
 
 # Copy application code
