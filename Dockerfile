@@ -10,8 +10,7 @@ LABEL fly_launch_runtime="Node.js"
 WORKDIR /app
 
 # Set production environment
-ENV NODE_ENV="development"
-
+ENV NODE_ENV="production"
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -20,15 +19,11 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
-# Install node modules
-# package.json과 package-lock.json 복사
+# Install node modules including devDependencies
+ENV NODE_ENV="development"
 COPY package.json ./
 COPY package-lock.json ./
-
-# 의존성 설치
-RUN npm install
-
-RUN npm ci --include=dev
+RUN npm ci
 
 # Copy application code
 COPY . .
@@ -36,9 +31,8 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Remove development dependencies
+# Remove development dependencies for production image
 RUN npm prune --omit=dev
-
 
 # Final stage for app image
 FROM base
@@ -46,10 +40,9 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
-# 포트 설정 (Fly.io에서 포트 8080 사용)
+# Set Fly.io port
 EXPOSE 8080
-
-# Fly.io에서 환경 변수를 읽어 포트 설정
 ENV PORT 8080
 
+# Start the server by default
 CMD [ "npm", "run", "start" ]
