@@ -28,10 +28,20 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Prune devDependencies but keep vite
-RUN npm prune --omit=dev
+# Final stage to reduce image size
+FROM node:${NODE_VERSION}-slim as final
 
-# Expose the port the app runs on
+WORKDIR /app
+
+# Copy built application from build stage
+COPY --from=base /app /app
+
+# Install only production dependencies
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm ci --omit=dev
+
+# Expose the port
 EXPOSE 3000
 
 # Start the server
