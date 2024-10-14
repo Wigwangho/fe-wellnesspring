@@ -39,7 +39,6 @@ COPY --from=base /app /app
 # Install only production dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm ci --omit=dev
 
 # Expose the port
 EXPOSE 3000
