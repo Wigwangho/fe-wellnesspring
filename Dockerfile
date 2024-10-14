@@ -1,47 +1,29 @@
-# syntax=docker/dockerfile:1
-
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.10.0
-FROM node:${NODE_VERSION}-slim as base
-
-LABEL fly_launch_runtime="Node.js"
+# 1. Build Stage (Vite로 정적 파일 빌드)
+FROM node:20.10.0-slim as builder
 
 WORKDIR /app
 
-ENV NODE_ENV="production"
-
-# Install necessary build tools and dependencies
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
-
-# Install vite globally
-RUN npm install -g vite
-
-# Copy package files and install dependencies
-COPY package.json ./
-COPY package-lock.json ./
+# Install build dependencies
+COPY package.json package-lock.json ./
 RUN npm ci --include=dev
 
-# Copy application code
+# Copy application source code
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# Final stage to reduce image size
-FROM node:${NODE_VERSION}-slim as final
+# 2. Serve Stage (Nginx로 정적 파일 서빙)
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy built files from the builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy built application from build stage
-COPY --from=base /app /app
+# Nginx configuration (optional if you need custom settings)
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-# Install only production dependencies
-COPY package.json ./
-COPY package-lock.json ./
+# Expose port 80 for Nginx
+EXPOSE 80
 
-# Expose the port
-EXPOSE 3000
-
-# Start the server
-CMD ["npm", "run", "start"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
