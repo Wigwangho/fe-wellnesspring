@@ -40,10 +40,8 @@ export default defineConfig(() => {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.scss'],
     },
     server: {
-      port: 3000,
-      proxy: {
-        // https://vitejs.dev/config/server-options.html
-      },
+      host: '0.0.0.0',  // 외부에서 접근 가능하도록 수정
+      port: process.env.PORT || 3000, // Fly.io에서 포트를 설정할 수 있게 처리
     },
   }
 })
