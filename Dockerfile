@@ -1,5 +1,4 @@
 # syntax=docker/dockerfile:1
-
 # Nginx를 기본 이미지로 사용
 FROM nginx:alpine as final
 
@@ -28,8 +27,8 @@ COPY --from=builder /app/build /usr/share/nginx/html
 # Nginx 설정 파일 복사
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Nginx가 3000 포트에서 서비스 제공
-EXPOSE 3000
+# Nginx가 80 포트에서 서비스 제공
+EXPOSE 80
 
 # Nginx 실행
 CMD ["nginx", "-g", "daemon off;"]
