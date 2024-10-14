@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1
+# syntax=docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.10.0
@@ -12,36 +12,31 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-# Throw-away build stage to reduce size of final image
-FROM base as build
-
-# Install packages needed to build node modules
+# Install necessary build tools and dependencies
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
-# Install node modules including devDependencies
-ENV NODE_ENV="development"
+# Install vite globally
+RUN npm install -g vite
+
+# Copy package files and install dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm ci
+
+# Install dependencies (including devDependencies)
+RUN npm ci --include=dev
 
 # Copy application code
 COPY . .
 
-# Build application
+# Build the application
 RUN npm run build
 
-# Remove development dependencies for production image
+# Prune devDependencies but keep vite
 RUN npm prune --omit=dev
 
-# Final stage for app image
-FROM base
-
-# Copy built application
-COPY --from=build /app /app
-
-# Set Fly.io port
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Start the server by default
-CMD [ "npm", "run", "start" ]
+# Start the server
+CMD ["npm", "run", "start"]
