@@ -41,8 +41,7 @@ FROM base
 COPY --from=build /app /app
 
 # Set Fly.io port
-EXPOSE 8080
-ENV PORT 8080
+EXPOSE 3000
 
 # Start the server by default
 CMD [ "npm", "run", "start" ]
