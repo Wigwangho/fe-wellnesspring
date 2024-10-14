@@ -10,7 +10,7 @@ LABEL fly_launch_runtime="Node.js"
 WORKDIR /app
 
 # Set production environment
-ENV NODE_ENV="production"
+ENV NODE_ENV="development"
 
 
 # Throw-away build stage to reduce size of final image
@@ -46,6 +46,10 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+# 포트 설정 (Fly.io에서 포트 8080 사용)
+EXPOSE 8080
+
+# Fly.io에서 환경 변수를 읽어 포트 설정
+ENV PORT 8080
+
 CMD [ "npm", "run", "start" ]
