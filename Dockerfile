@@ -6,10 +6,8 @@ FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Node.js"
 
-# Node.js app lives here
 WORKDIR /app
 
-# Set production environment
 ENV NODE_ENV="production"
 
 # Install necessary build tools and dependencies
@@ -22,8 +20,6 @@ RUN npm install -g vite
 # Copy package files and install dependencies
 COPY package.json ./
 COPY package-lock.json ./
-
-# Install dependencies (including devDependencies)
 RUN npm ci --include=dev
 
 # Copy application code
